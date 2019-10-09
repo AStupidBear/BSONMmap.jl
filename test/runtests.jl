@@ -13,23 +13,23 @@ dict = Dict(
         "group" => Dict("arr[float64]" => ones(10)),
         )
     )
-h5save("test.h5", dict)
-@test bsload("test.h5", mmaparrays = true) == dict
-@test bsload("test.h5", mmaparrays = false) == dict
+bssave("test.bson", dict)
+@test bsload("test.bson", mmaparrays = true) == dict
+@test bsload("test.bson", mmaparrays = true) == dict
 
-mutable struct Data
-    x::Array{Float32, 2}
-    y::Array{Float64, 3}
+mutable struct Data{TX, TY}
+    x::TX
+    y::TY
     z::Dict{String, Int}
     w::String
 end
-data = Data(rand(Float32, 2, 2), rand(2, 2, 2), Dict("a" => 1), "abcd")
+data = Data(rand(Float32, 7, 3), rand(2, 2, 2), Dict("a" => 1), "abcd")
 bssave("test.bson", data, force = true)
 for mmap in (true, false)
-    data′ = bsload("test.h5", Data, mmaparrays = mmap)
+    data′ = bsload("test.bson", Data, mmaparrays = mmap)
     for s in fieldnames(Data)
         @test getfield(data, s) == getfield(data′, s)
     end
 end
 
-rm("test.h5")
+rm("test.bson", force = true)

@@ -43,11 +43,8 @@ function BSON.parse_tag(io::IO, tag::BSONType)
     end
 end
 
-function bsload(src, ::Type{T} = Dict; mmaparrays = true) where T
-    dict = withenv("BSON_MMAP" => mmaparrays) do 
-        BSON.load(src) 
-    end
-    T <: AbstractDict && return T(dict)
+function bsload(src, ::Type{T}; mmaparrays = false) where T
+    dict = bsload(src, mmaparrays = mmaparrays)
     o = Any[]
     for s in fieldnames(T)
         if s == :src
@@ -62,6 +59,8 @@ function bsload(src, ::Type{T} = Dict; mmaparrays = true) where T
     return T(o...)
 end
 
+bsload(src; mmaparrays = true) = withenv(() -> BSON.load(src), "BSON_MMAP" => mmaparrays)
+
 todict(x) = Dict{Symbol, Any}(s => getfield(x, s) for s in fieldnames(typeof(x)))
 
 function bssave(dst, obj; force = false)
@@ -72,11 +71,19 @@ function bssave(dst, obj; force = false)
         !Sys.iswindows() && !force
         symlink(obj.src, dst)
     else
-        h5save(dst, delete!(todict(obj), :src))
+        bssave(dst, delete!(todict(obj), :src))
     end
     return dst
 end
 
-h5save(dst, dict::Dict) = BSON.bson(dst, dict)
+bssave(dst, dict::AbstractDict) = withenv(() -> BSON.bson(dst, dict), "BSON_ALIGNMENT" => align(dict))
+
+align(d::AbstractDict) = lcm(Int[align(x) for x in values(d)])
+
+align(x::AbstractArray{T}) where T = isbitstype(T) ? sizeof(T) : 1
+
+align(obj) = lcm(Int[align(x) for x in fieldvalues(obj)])
+
+fieldvalues(obj::T) where T = [getfield(obj, s) for s in fieldnames(T)]
 
 end # module

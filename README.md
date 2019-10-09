@@ -1,4 +1,4 @@
-# Extensions to BSON.jl
+# Add mmap support to to BSON.jl
 
 ## Installation
 
