@@ -76,14 +76,6 @@ function bssave(dst, obj; force = false)
     return dst
 end
 
-bssave(dst, dict::AbstractDict) = withenv(() -> BSON.bson(dst, dict), "BSON_ALIGNMENT" => align(dict))
-
-align(d::AbstractDict) = lcm(Int[align(x) for x in values(d)])
-
-align(x::AbstractArray{T}) where T = isbitstype(T) ? sizeof(T) : 1
-
-align(obj) = lcm(Int[align(x) for x in fieldvalues(obj)])
-
-fieldvalues(obj::T) where T = [getfield(obj, s) for s in fieldnames(T)]
+bssave(dst, dict::AbstractDict) = withenv(() -> BSON.bson(dst, dict), "BSON_ALIGNMENT" => 8)
 
 end # module
