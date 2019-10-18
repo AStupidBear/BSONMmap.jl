@@ -9,12 +9,12 @@ dict = Dict(
     "arr[str]" => ["α" "β"; "γ" "δ"],
     "arr[nt]" => repeat([(a = 1, b = "α", c = 1f0)], 2),
     "group" => Dict(
-        "arr[float32]" => zeros(Float32, 10),
+        "arr[float32]" => zeros(Float32, 11),
         "group" => Dict("arr[float64]" => ones(10)),
         )
     )
 bssave("test.bson", dict)
-@test bsload("test.bson", mmaparrays = true) == dict
+@test bsload("test.bson", mmaparrays = false) == dict
 @test bsload("test.bson", mmaparrays = true) == dict
 
 mutable struct Data{TX, TY}
