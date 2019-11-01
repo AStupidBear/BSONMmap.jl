@@ -3,8 +3,8 @@
 ## Installation
 
 ```julia
-julia>]
-pkg> add https://github.com/AStupidBear/BSONMmap.jl.git
+using Pkg
+pkg"add BSONMmap"
 ```
 
 ## Usage
