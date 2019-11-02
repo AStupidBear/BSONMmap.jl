@@ -16,13 +16,14 @@ BSON.bson("test.bson", dict)
 ```
 
 You can load it back using `bsload`
-```
+
+```julia
 bsload("test.bson", mmaparrays = true) == dict
 ```
 
 Or just use `BSON`s native `load`
 
-```
+```julia
 withenv("BSON_MMAP" => true) do
     BSON.load("test.bson")
 end
