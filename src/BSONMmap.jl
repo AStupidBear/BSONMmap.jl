@@ -8,13 +8,24 @@ export bsload, bssave
 
 BSON.reinterpret_(::Type{T}, x) where T = T[_x for _x in reinterpret(T, x)]
 
-global cache = Set()
+macro staticvar(init)
+    var = gensym()
+    __module__.eval(:(const $var = $init))
+    var = esc(var)
+    quote
+        global $var
+        $var
+    end
+end
+
 function bytes2array(bytes, T, dims...)
-    push!(cache, bytes)
+    cache = @staticvar Dict{UInt, Array}()
+    sha = hash(bytes)
+    cache[sha] = bytes
     ptr = convert(Ptr{T}, pointer(bytes))
     arr = unsafe_wrap(Array, ptr, dims)
     finalizer(arr) do z
-        delete!(cache, bytes)
+        delete!(cache, sha)
     end
     return arr
 end
