@@ -1,7 +1,6 @@
 # Add mmap support to to BSON.jl
 
-[![Build Status](https://travis-ci.com/AStupidBear/BSONMmap.jl.svg?branch=master)](https://travis-ci.com/AStupidBear/BSONMmap.jl)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/AStupidBear/BSONMmap.jl?svg=true)](https://ci.appveyor.com/project/AStupidBear/BSONMmap-jl)
+[![Build Status](https://github.com/AStupidBear/BSONMmap.jl/workflows/CI/badge.svg)](https://github.com/AStupidBear/BSONMmap.jl/actions)
 [![Coverage](https://codecov.io/gh/AStupidBear/BSONMmap.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/AStupidBear/BSONMmap.jl)
 
 ## Installation
