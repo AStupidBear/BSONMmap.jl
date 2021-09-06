@@ -13,9 +13,9 @@ dict = Dict(
         "group" => Dict("arr[float64]" => ones(10)),
         )
     )
-bssave("test.bson", dict)
-@test bsload("test.bson", mmaparrays = false) == dict
-@test bsload("test.bson", mmaparrays = true) == dict
+bssave("dict.bson", dict)
+@test bsload("dict.bson", mmaparrays = false) == dict
+@test bsload("dict.bson", mmaparrays = true) == dict
 
 mutable struct Data{TX, TY}
     x::TX
@@ -24,12 +24,15 @@ mutable struct Data{TX, TY}
     w::String
 end
 data = Data(rand(Float32, 7, 3), rand(2, 2, 2), Dict("a" => 1), "abcd")
-bssave("test.bson", data, force = true)
+bssave("data.bson", data, force = true)
 for mmap in (true, false)
-    data′ = bsload("test.bson", Data, mmaparrays = mmap)
+    data′ = bsload("data.bson", Data, mmaparrays = mmap)
     for s in fieldnames(Data)
         @test getfield(data, s) == getfield(data′, s)
     end
 end
 
-rm("test.bson", force = true)
+if !Sys.iswindows()
+    rm("data.bson", force = true)
+    rm("dict.bson", force = true)
+end
